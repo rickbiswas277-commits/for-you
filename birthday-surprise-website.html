@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffe4ef">
+<title>A Birthday Surprise</title>
+<style>
+:root{--pink:#e85d9e;--deep:#b83f7b;--ink:#633d68;--glass:rgba(255,255,255,.78)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:ui-rounded,"Segoe UI",system-ui,sans-serif;color:var(--ink);min-height:100vh;background:linear-gradient(135deg,#ffe0ec,#e9ddff 55%,#ddf6ff);overflow-x:hidden}
+button{font:inherit}
+.page{display:none;min-height:100vh;padding:24px 16px 34px;text-align:center;animation:fade .55s ease}
+.page.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+h1{font-size:clamp(2rem,6vw,3.3rem);color:#d44e87;margin:24px 0 12px}
+h2{color:#d44e87}
+p{line-height:1.55}
+.intro{max-width:620px;margin:0 auto 18px}
+.btn{border:0;background:var(--pink);color:white;padding:12px 22px;border-radius:999px;margin:8px 5px;cursor:pointer;box-shadow:0 7px 18px #d47aa455;transition:.2s}
+.btn:hover{transform:translateY(-2px);background:var(--deep)}
+.btn.secondary{background:#9274c7}
+.nav{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:28px auto 0}
+.panel{width:min(92%,520px);margin:22px auto;padding:22px;background:var(--glass);border:1px solid #fff;border-radius:24px;box-shadow:0 12px 35px #744c7720;backdrop-filter:blur(10px)}
+/* Letter */
+.envelope{position:relative;width:270px;height:175px;margin:75px auto 28px;background:#ed8eb4;border-radius:6px;cursor:pointer;box-shadow:0 12px 30px #9d527755;isolation:isolate}
+.envelope:before{content:"";position:absolute;inset:0;border-left:135px solid transparent;border-right:135px solid transparent;border-top:100px solid #f7a9c9;z-index:3}
+.envelope:after{content:"💗";position:absolute;top:72px;left:calc(50% - 18px);font-size:35px;z-index:4}
+.letter-slip{position:absolute;width:230px;height:145px;background:white;left:20px;bottom:5px;border-radius:5px;transition:.7s;z-index:2}
+.envelope.open .letter-slip{transform:translateY(-120px)}
+.letter-paper{display:block;width:min(94%,460px);min-height:300px;height:auto;margin:18px auto;padding:18px;background:#fffdfd;border:2px solid #f3c2d8;border-radius:14px;box-shadow:0 8px 25px #9d527733}
+.letter-paper textarea{display:block;width:100%;min-height:190px;resize:vertical;border:1px solid #edc5d8;border-radius:12px;padding:14px;font:inherit;line-height:1.6;color:var(--ink);background:#fffafd;outline-color:var(--pink)}
+.letter-paper .btn{margin-bottom:0}
+.letter-paper label{display:block;text-align:left;color:#875b84}
+/* More realistic illustrated birthday cake */
+.cake{position:relative;width:300px;height:270px;margin:48px auto 12px;filter:drop-shadow(0 12px 12px #8e527044)}
+.plate{position:absolute;bottom:5px;left:4px;width:292px;height:30px;border-radius:50%;background:linear-gradient(180deg,#fff9ff 0%,#d9c7e8 65%,#b49acb 100%);box-shadow:inset 0 3px 5px #fff}
+.cake-body{position:absolute;left:34px;bottom:25px;width:232px;height:132px;border-radius:12px 12px 24px 24px;background:linear-gradient(90deg,#b85c72 0%,#f2a0a9 17%,#ffe0c9 50%,#ed9ba8 82%,#a94e69 100%);box-shadow:inset 0 -13px 0 #a94e69, inset 0 7px 8px #fff8}
+.cake-body:before{content:"";position:absolute;left:0;right:0;top:38px;height:13px;background:linear-gradient(90deg,#fff0d5,#fff9e9,#f7d8bf);box-shadow:0 3px 5px #8b435344}
+.frosting{position:absolute;left:27px;bottom:145px;width:246px;height:58px;border-radius:50%;background:radial-gradient(ellipse at 50% 25%,#fff9ed 0%,#ffe7ef 48%,#e9a0bc 100%);box-shadow:inset 0 -7px 8px #d887a5,0 5px 8px #9b536044;z-index:2}
+.frosting:after{content:"";position:absolute;left:8px;right:8px;bottom:-16px;height:30px;background:radial-gradient(ellipse at 50% 0%,#fff0f4 0%,#f5b6cd 75%);clip-path:polygon(0 0,100% 0,100% 35%,91% 35%,88% 100%,79% 100%,76% 30%,65% 30%,62% 80%,52% 80%,49% 25%,37% 25%,34% 100%,24% 100%,21% 35%,10% 35%,7% 85%,0 85%);filter:drop-shadow(0 3px 2px #b85c7244)}
+.berry{position:absolute;z-index:4;width:24px;height:27px;background:radial-gradient(circle at 35% 25%,#ffb3b3 0 10%,#e83f60 38%,#a91643 100%);border-radius:55% 55% 65% 65%;transform:rotate(15deg);box-shadow:inset 2px 0 3px #fff7}
+.berry:after{content:"";position:absolute;top:-7px;left:7px;width:12px;height:9px;background:#57975a;clip-path:polygon(50% 100%,0 0,45% 30%,60% 0,100% 0)}
+.berry.b1{left:76px;bottom:177px}.berry.b2{left:137px;bottom:185px;transform:scale(.85) rotate(-12deg)}.berry.b3{left:197px;bottom:174px;transform:scale(.9) rotate(20deg)}
+.cream{position:absolute;z-index:3;bottom:178px;width:22px;height:18px;border-radius:50% 50% 40% 40%;background:radial-gradient(circle at 35% 25%,#fff 0,#fff3e8 65%,#e8b9c4 100%)}
+.cream.k1{left:108px}.cream.k2{left:174px}
+.candle{position:absolute;z-index:5;bottom:194px;width:12px;height:53px;border-radius:4px;background:repeating-linear-gradient(45deg,#fff 0 7px,#e85d9e 7px 12px);box-shadow:inset -2px 0 3px #a64c7955}
+.c1{left:105px}.c2{left:145px}.c3{left:185px}
+.flame{position:absolute;top:-24px;left:-2px;width:17px;height:24px;background:radial-gradient(ellipse at 50% 70%,#fff9b2 0 18%,#ffbd39 42%,#ff762e 75%);border-radius:50% 50% 50% 0;transform:rotate(-45deg);box-shadow:0 0 16px #ffb52e;animation:flicker .45s infinite alternate}
+@keyframes flicker{to{transform:rotate(-45deg) scale(.78)}}
+.flame.off{display:none}
+.cake.cut .cake-body{animation:cutCake .9s ease forwards}
+.cake.cut .frosting{animation:splitFrosting .9s ease forwards}
+@keyframes cutCake{0%{transform:scaleX(1)}45%{transform:scaleX(.96)}100%{transform:translateX(-28px) rotate(-3deg);clip-path:polygon(0 0,48% 0,42% 100%,0 100%)}}
+@keyframes splitFrosting{to{transform:translateX(-24px) rotate(-3deg)}}
+.cake-slice{display:none;font-size:30px;margin-top:-12px;animation:popSlice .8s ease}
+.cake.cut+.cake-slice{display:block}
+@keyframes popSlice{from{opacity:0;transform:translate(0,15px) scale(.6)}to{opacity:1;transform:translate(0,0) scale(1)}}
+.status{min-height:28px;margin:10px auto;color:#984879}
+/* Music */
+.music-player{max-width:390px}
+.music-note{font-size:42px;animation:bob 1s infinite alternate}
+@keyframes bob{to{transform:translateY(-6px) rotate(8deg)}}
+.music-player input[type=range]{width:100%;accent-color:var(--pink);margin:12px 0}
+.music-player input[type=file]{max-width:100%;font-size:13px;margin:12px auto}
+.track-name{font-size:.9rem;color:#875b84;overflow-wrap:anywhere}
+/* Gallery */
+.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:18px;max-width:850px;margin:28px auto}
+.photo{background:white;padding:10px 10px 22px;border-radius:5px;box-shadow:0 7px 20px #744c7730;transform:rotate(-2deg);transition:.25s}
+.photo:nth-child(even){transform:rotate(3deg)}
+.photo:hover{transform:rotate(0) scale(1.035)}
+.photo img{display:block;width:100%;height:180px;object-fit:cover;border-radius:3px;background:#f8e9f1}
+.photo p{font-family:cursive;margin-top:10px}
+.upload-label{display:inline-block}
+#photoInput,#songInput{display:none}
+.sender-details{max-width:520px;text-align:left}
+.sender-details h2{text-align:center;margin-bottom:12px}
+.sender-details label{display:block;font-weight:600;margin:12px 0;color:#80517c}
+.sender-details input{display:block;width:100%;margin-top:6px;padding:12px;border:1px solid #edc5d8;border-radius:12px;background:#fffafd;font:inherit;color:var(--ink);outline-color:var(--pink)}
+.letter-message{white-space:pre-wrap;text-align:left;min-height:150px;padding:8px;line-height:1.7;overflow-wrap:anywhere}
+.letter-signature{text-align:right;margin-top:16px;font-family:cursive;color:#d44e87}
+.hint{font-size:.88rem;color:#896d8b;margin-top:8px}
+footer{padding:20px;text-align:center;color:#a45d8b}
+.heart{position:fixed;bottom:-30px;font-size:20px;pointer-events:none;animation:floatUp 5s linear forwards;z-index:10}
+@keyframes floatUp{to{transform:translateY(-110vh) rotate(360deg);opacity:0}}
+.confetti{position:fixed;top:-15px;width:9px;height:13px;z-index:20;animation:fall 3s linear forwards;pointer-events:none}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+@media(max-width:420px){.envelope{margin-top:60px}.cake{transform:scale(.9);margin-top:55px}}
+</style>
+</head>
+<body>
+
+<main>
+<section class="page active" id="page1">
+  <h1>💌 A Little Surprise For You</h1>
+  <p class="intro">Create a personal birthday surprise before you send it.</p>
+  <div class="panel sender-details" id="senderDetails">
+    <h2>🎁 Who is sending this surprise?</h2>
+    <label>Your name
+      <input id="senderName" type="text" maxlength="60" placeholder="Enter your name">
+    </label>
+    <label>Your friend's name
+      <input id="friendName" type="text" maxlength="60" placeholder="Enter your friend's name">
+    </label>
+    <p class="hint">These names will appear in the personalized version you download.</p>
+  </div>
+  <div class="envelope" id="envelope" role="button" tabindex="0" aria-label="Open the letter" onclick="openLetter()">
+    <div class="letter-slip"></div>
+  </div>
+  <button class="btn" onclick="openLetter()">Open Your Letter 💗</button>
+  <div class="letter-paper show" id="letterPaper" aria-label="Write your birthday letter">
+    <label for="senderName"><strong>Who is sending this wish?</strong></label>
+    <input id="senderName" type="text" maxlength="60" placeholder="Enter your name"
+      style="display:block;width:100%;margin:10px 0 14px;padding:12px;border:1px solid #edc5d8;border-radius:10px;font:inherit;color:#633d68;background:#fffafd">
+    <label for="letterText"><strong>Your birthday letter</strong></label>
+    <textarea id="letterText" placeholder="Write your birthday letter here... 💗" aria-label="Your letter"></textarea>
+    <button class="btn" type="button" onclick="saveLetter()">Save Letter 💌</button>
+    <p class="hint" id="letterStatus">Your name and letter will be included when you send your wish.</p>
+  </div>
+  <p class="hint">Add your name and write a personal message. You can also attach your own photos on the Memories page.</p>
+  <div class="nav"><button class="btn" onclick="goPage(2)">Next surprise →</button></div>
+</section>
+
+<section class="page" id="page2">
+  <h1>🎂 Make A Birthday Wish!</h1>
+  <p class="intro">Three candles, three wishes, unlimited happiness.</p>
+  <div class="cake" id="birthdayCake" aria-label="Strawberry and cream birthday cake with three candles">
+    <div class="plate"></div>
+    <div class="cake-body"></div>
+    <div class="frosting"></div>
+    <div class="berry b1"></div><div class="berry b2"></div><div class="berry b3"></div>
+    <div class="cream k1"></div><div class="cream k2"></div>
+    <div class="candle c1"><div class="flame"></div></div>
+    <div class="candle c2"><div class="flame"></div></div>
+    <div class="candle c3"><div class="flame"></div></div>
+  </div>
+  <div class="cake-slice" id="cakeSlice">🍰 A slice for you!</div>
+  <p class="status" id="micStatus" aria-live="polite">🎤 Enable your microphone, then blow gently!</p>
+  <button class="btn" onclick="startMic()">🎤 Enable Microphone</button>
+  <button class="btn secondary" onclick="blowOut()">Blow candles manually</button>
+  <button class="btn" id="cutButton" onclick="cutCake()" hidden>🔪 Cut the cake!</button>
+  <p class="hint">Microphone works on HTTPS or localhost. If it doesn't work, use the manual button.</p>
+  <div class="nav">
+    <button class="btn secondary" onclick="goPage(1)">← Back</button>
+    <button class="btn" onclick="goPage(3)">See our memories →</button>
+  </div>
+</section>
+
+<section class="page" id="page3">
+  <h1>📸 Beautiful Memories</h1>
+  <p class="intro">Add photos of yourself or special moments to show who is sending the birthday wish.</p>
+  <label class="btn upload-label" for="photoInput">＋ Add My Photos</label>
+  <input type="file" id="photoInput" accept="image/*" multiple>
+  <div class="gallery" id="gallery">
+    <div class="photo"><img alt="Photo placeholder" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect width='100%25' height='100%25' fill='%23f8dce9'/%3E%3Ctext x='50%25' y='48%25' text-anchor='middle' font-size='64'%3E📷%3C/text%3E%3Ctext x='50%25' y='65%25' text-anchor='middle' font-size='22' fill='%23875b84'%3EAdd a photo%3C/text%3E%3C/svg%3E"><p>A favourite memory ❤️</p></div>
+    <div class="photo"><img alt="Photo placeholder" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect width='100%25' height='100%25' fill='%23e9ddff'/%3E%3Ctext x='50%25' y='48%25' text-anchor='middle' font-size='64'%3E✨%3C/text%3E%3Ctext x='50%25' y='65%25' text-anchor='middle' font-size='22' fill='%23875b84'%3EYour moment%3C/text%3E%3C/svg%3E"><p>Best moments ✨</p></div>
+    <div class="photo"><img alt="Photo placeholder" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect width='100%25' height='100%25' fill='%23ddf6ff'/%3E%3Ctext x='50%25' y='48%25' text-anchor='middle' font-size='64'%3E💗%3C/text%3E%3Ctext x='50%25' y='65%25' text-anchor='middle' font-size='22' fill='%23875b84'%3EAdd your memories%3C/text%3E%3C/svg%3E"><p>Forever friends 💗</p></div>
+  </div>
+  <h2>🎉 Happy Birthday!</h2>
+  <p>May your days be full of laughter, love and wonderful surprises.</p>
+  <button class="btn" onclick="createAndSendWish()">💌 Send My Birthday Wish</button>
+  <p class="hint" id="sendStatus" aria-live="polite">Your name, letter and uploaded photos will be packed into one file to share.</p>
+  <button class="btn secondary" onclick="celebrate()">🎊 Celebrate Again!</button>
+  <div class="nav">
+    <button class="btn secondary" onclick="goPage(2)">← Back</button>
+    <button class="btn" onclick="goPage(1)">Home 🏠</button>
+  </div>
+</section>
+</main>
+
+<!-- Music player appears on every page -->
+<aside class="panel music-player" aria-label="Birthday music player">
+  <div class="music-note">🎵</div>
+  <h2>Birthday Vibes</h2>
+  <p class="track-name" id="trackName">Choose a birthday song from your device</p>
+  <input type="file" id="songInput" accept="audio/*">
+  <label class="btn upload-label" for="songInput">Choose a song 🎶</label>
+  <div>
+    <button class="btn" id="musicButton" onclick="toggleMusic()">▶ Play</button>
+    <button class="btn secondary" onclick="stopMusic()">■ Stop</button>
+  </div>
+  <label for="volume">Volume</label>
+  <input type="range" id="volume" min="0" max="1" step="0.01" value="0.7">
+  <p class="hint" id="musicStatus" aria-live="polite">Pick an audio file to play your chosen song.</p>
+  <audio id="birthdaySong" loop></audio>
+</aside>
+
+<footer>Made with ❤️ for a special friend</footer>
+
+<script>
+function goPage(num){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page'+num).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function openLetter(){
+  document.getElementById('envelope').classList.add('open');
+  document.getElementById('letterPaper').scrollIntoView({behavior:'smooth',block:'center'});
+}
+const letterText=document.getElementById('letterText');
+const senderName=document.getElementById('senderName');
+try{
+  letterText.value=localStorage.getItem('birthdayLetter')||'';
+  senderName.value=localStorage.getItem('birthdaySenderName')||'';
+}catch(e){}
+function saveLetter(){
+  try{
+    localStorage.setItem('birthdayLetter',letterText.value);
+    localStorage.setItem('birthdaySenderName',senderName.value);
+    document.getElementById('letterStatus').textContent='Your name and letter are saved on this device 💗';
+  }catch(e){
+    document.getElementById('letterStatus').textContent='Could not save in this browser. Your text can still be included when you share.';
+  }
+}
+document.getElementById('envelope').addEventListener('keydown',e=>{
+  if(e.key==='Enter'||e.key===' '){e.preventDefault();openLetter();}
+});
+
+// Microphone blow detection (ambient sound threshold; use manual backup if needed)
+let micStream=null,audioContext=null,analyser=null,micRunning=false,blowTimer=null,blown=false;
+async function startMic(){
+  try{
+    if(!navigator.mediaDevices?.getUserMedia) throw new Error('Microphone needs HTTPS or localhost.');
+    if(micStream) micStream.getTracks().forEach(t=>t.stop());
+    micStream=await navigator.mediaDevices.getUserMedia({audio:true});
+    audioContext=new (window.AudioContext||window.webkitAudioContext)();
+    if(audioContext.state==='suspended') await audioContext.resume();
+    const source=audioContext.createMediaStreamSource(micStream);
+    analyser=audioContext.createAnalyser();analyser.fftSize=1024;source.connect(analyser);
+    micRunning=true;blown=false;
+    document.getElementById('micStatus').textContent='Microphone ready! Blow towards your microphone.';
+    detectBlow();
+  }catch(err){
+    document.getElementById('micStatus').textContent='Could not start microphone: '+err.message;
+  }
+}
+function detectBlow(){
+  if(!micRunning||!analyser||blown)return;
+  const data=new Uint8Array(analyser.fftSize);
+  analyser.getByteTimeDomainData(data);
+  let sum=0;
+  for(let i=0;i<data.length;i++){const v=(data[i]-128)/128;sum+=v*v;}
+  const volume=Math.sqrt(sum/data.length);
+  if(volume>0.105){
+    if(!blowTimer) blowTimer=setTimeout(()=>blowOut(),650);
+  }else{clearTimeout(blowTimer);blowTimer=null;}
+  if(micRunning&&!blown) requestAnimationFrame(detectBlow);
+}
+function stopMic(){
+  micRunning=false;clearTimeout(blowTimer);blowTimer=null;
+  if(micStream){micStream.getTracks().forEach(t=>t.stop());micStream=null;}
+  if(audioContext){audioContext.close();audioContext=null;}
+}
+function blowOut(){
+  if(blown)return;
+  blown=true;stopMic();
+  document.querySelectorAll('.flame').forEach(f=>f.classList.add('off'));
+  document.getElementById('micStatus').textContent='🎉 All candles are out! Now it is time to cut the cake!';
+  document.getElementById('cutButton').hidden=false;
+  celebrate();
+}
+function cutCake(){
+  if(!blown)return;
+  const cake=document.getElementById('birthdayCake');
+  cake.classList.add('cut');
+  document.getElementById('cutButton').disabled=true;
+  document.getElementById('cutButton').textContent='🍰 Cake is served!';
+  document.getElementById('micStatus').textContent='Yay! Let’s enjoy the birthday cake! 🎂';
+  document.getElementById('cakeSlice').style.display='block';
+  celebrate();
+}
+
+// Photo uploads are displayed locally in this browser session.
+function addPhotoCard(src, captionText='A special memory ❤️'){
+  const gallery=document.getElementById('gallery');
+  const card=document.createElement('div');card.className='photo';card.dataset.userUpload='true';
+  const img=document.createElement('img');img.src=src;img.alt='Uploaded memory';
+  const caption=document.createElement('input');
+  caption.type='text';caption.value=captionText;caption.maxLength=80;
+  caption.setAttribute('aria-label','Photo caption');
+  caption.style.cssText='width:100%;border:0;border-bottom:1px solid #f0c9dc;text-align:center;padding:8px 2px;font:inherit;color:#875b84;background:transparent';
+  card.append(img,caption);gallery.append(card);
+}
+function loadSavedPhotos(){
+  try{
+    const saved=JSON.parse(localStorage.getItem('birthdayPhotos')||'[]');
+    saved.forEach(item=>addPhotoCard(item.src,item.caption));
+  }catch(e){}
+}
+loadSavedPhotos();
+document.getElementById('photoInput').addEventListener('change',async e=>{
+  const files=Array.from(e.target.files).filter(f=>f.type.startsWith('image/'));
+  const saved=(()=>{try{return JSON.parse(localStorage.getItem('birthdayPhotos')||'[]')}catch(err){return []}})();
+  for(const file of files){
+    // Resize photos before saving to avoid filling browser storage.
+    const dataUrl=await new Promise(resolve=>{
+      const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.readAsDataURL(file);
+    });
+    const img=new Image();
+    await new Promise(resolve=>{img.onload=resolve;img.onerror=resolve;img.src=dataUrl;});
+    let src=dataUrl;
+    if(img.naturalWidth){
+      const scale=Math.min(1,1000/img.naturalWidth,1000/img.naturalHeight);
+      const canvas=document.createElement('canvas');
+      canvas.width=Math.round(img.naturalWidth*scale);canvas.height=Math.round(img.naturalHeight*scale);
+      canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
+      src=canvas.toDataURL('image/jpeg',.78);
+    }
+    addPhotoCard(src);
+    saved.push({src,caption:'A special memory ❤️'});
+  }
+  try{
+    localStorage.setItem('birthdayPhotos',JSON.stringify(saved));
+  }catch(err){
+    document.getElementById('photoInput').insertAdjacentHTML('afterend','<p class="hint">Photos are visible now, but there may not be enough browser storage to keep them after closing the page.</p>');
+  }
+  e.target.value='';
+});
+
+// Create one portable birthday-wish file containing the sender's name,
+// letter and uploaded photos. The visitor can share it with the birthday person.
+function escapeHTML(value){
+  return String(value).replace(/[&<>"']/g, ch => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[ch]));
+}
+async function createAndSendWish(){
+  const name=senderName.value.trim();
+  const letter=letterText.value.trim();
+  const status=document.getElementById('sendStatus');
+  if(!name){
+    status.textContent='Please enter your name first, so the birthday person knows who sent this wish.';
+    senderName.focus();return;
+  }
+  if(!letter && !document.querySelector('[data-user-upload="true"]')){
+    status.textContent='Please write a letter or add at least one photo before sending.';
+    letterText.focus();return;
+  }
+  saveLetter();
+  const cards=Array.from(document.querySelectorAll('[data-user-upload="true"]'));
+  const photos=cards.map(card=>({
+    src:card.querySelector('img').src,
+    caption:card.querySelector('input')?.value || 'A special memory ❤️'
+  }));
+  const photoHTML=photos.map(photo=>`<figure><img src="${photo.src}" alt="Photo from ${escapeHTML(name)}"><figcaption>${escapeHTML(photo.caption)}</figcaption></figure>`).join('');
+  const messageHTML=letter
+    ? `<p class="letter">${escapeHTML(letter).replace(/\n/g,'<br>')}</p>`
+    : '<p class="letter">A photo-filled birthday wish, sent with love! 💗</p>';
+  const documentHTML=`<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Birthday wish from ${escapeHTML(name)}</title>
+<style>
+body{margin:0;padding:28px 16px;font-family:system-ui,sans-serif;color:#633d68;background:linear-gradient(135deg,#ffe0ec,#e9ddff,#ddf6ff);text-align:center}
+main{max-width:760px;margin:25px auto;padding:24px;background:#ffffffd9;border-radius:22px}
+h1{color:#d44e87}.letter{white-space:normal;line-height:1.8;text-align:left;background:#fffafd;padding:20px;border-radius:14px}
+.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-top:24px}
+figure{margin:0;background:white;padding:10px 10px 18px;box-shadow:0 5px 18px #744c7720}
+img{width:100%;max-height:340px;object-fit:contain}figcaption{padding:9px}
+</style></head><body><main>
+<h1>💌 A Birthday Wish For You!</h1>
+<h2>From ${escapeHTML(name)} ❤️</h2>
+${messageHTML}
+${photoHTML ? `<section class="gallery">${photoHTML}</section>` : ''}
+<p style="margin-top:28px">Made with love 🎂</p>
+</main></body></html>`;
+  const file=new File([documentHTML],`birthday-wish-from-${name.replace(/[^a-z0-9_-]/gi,'-')||'friend'}.html`,{type:'text/html'});
+  try{
+    if(navigator.canShare && navigator.canShare({files:[file]}) && navigator.share){
+      await navigator.share({files:[file],title:'Birthday wish from '+name,text:'A birthday wish for you ❤️'});
+      status.textContent='Your birthday wish was shared! 💗';
+    }else{
+      const url=URL.createObjectURL(file);
+      const link=document.createElement('a');
+      link.href=url;link.download=file.name;document.body.appendChild(link);link.click();link.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),1500);
+      status.textContent='Your birthday wish file was downloaded. Send that HTML file to the birthday person on WhatsApp, email or another app.';
+    }
+  }catch(err){
+    if(err.name==='AbortError'){
+      status.textContent='Sharing was cancelled. Your letter and photos are still here.';
+    }else{
+      status.textContent='Could not open sharing. Please try again or use another browser.';
+    }
+  }
+}
+
+// Build a recipient-ready copy with the sender's letter and photos embedded.
+let selectedSongFile=null;
+
+function escapeHtml(value){
+  return String(value).replace(/[&<>"']/g,ch=>({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[ch]));
+}
+
+function fileAsDataURL(file){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=()=>resolve(reader.result);
+    reader.onerror=()=>reject(new Error('Could not read the selected music file.'));
+    reader.readAsDataURL(file);
+  });
+}
+
+async function downloadPersonalizedWebsite(){
+  const sender=(document.getElementById('senderName').value||'').trim();
+  const friend=(document.getElementById('friendName').value||'').trim();
+  const message=(document.getElementById('letterText').value||'').trim();
+  const sourceCards=Array.from(document.querySelectorAll('#gallery .photo[data-user-photo="true"]'));
+  const photos=sourceCards.map(card=>({
+    src:card.querySelector('img')?.src||'',
+    caption:card.querySelector('input')?.value||card.querySelector('p')?.textContent||'A special memory ❤️'
+  })).filter(item=>item.src);
+
+  const status=document.getElementById('exportStatus');
+  status.textContent='Preparing your personalized birthday website…';
+
+  try{
+    const copy=document.documentElement.cloneNode(true);
+    const pageOne=copy.querySelector('#page1');
+    const pageThree=copy.querySelector('#page3');
+
+    // Personalize headings and remove the sender-only setup form.
+    const heading=pageOne.querySelector('h1');
+    heading.textContent='💌 A Little Surprise For '+(friend||'You');
+    pageOne.querySelector('.intro').textContent=
+      sender ? 'A birthday surprise, made with love by '+sender+'.' : 'A little birthday surprise made just for you.';
+    copy.querySelector('#senderDetails')?.remove();
+
+    // Turn the letter editor into a readable letter for the recipient.
+    const paper=copy.querySelector('#letterPaper');
+    paper.innerHTML='';
+    const letterBody=copy.ownerDocument.createElement('div');
+    letterBody.className='letter-message';
+    letterBody.textContent=message;
+    paper.appendChild(letterBody);
+    if(sender){
+      const signature=copy.ownerDocument.createElement('p');
+      signature.className='letter-signature';
+      signature.textContent='With love, '+sender+' ❤️';
+      paper.appendChild(signature);
+    }
+    copy.querySelector('#letterStatus')?.remove();
+    const letterHint=Array.from(pageOne.querySelectorAll('.hint')).find(el=>el.textContent.includes('Write a personal message'));
+    letterHint?.remove();
+
+    // Remove photo upload controls and embed the photos selected by the sender.
+    pageThree.querySelector('label[for="photoInput"]')?.remove();
+    const photoInput=copy.querySelector('#photoInput');
+    if(photoInput) photoInput.style.display='none';
+    const gallery=copy.querySelector('#gallery');
+    gallery.innerHTML='';
+    photos.forEach(item=>{
+      const card=copy.ownerDocument.createElement('div');
+      card.className='photo';
+      const img=copy.ownerDocument.createElement('img');
+      img.src=item.src;
+      img.alt='A shared memory';
+      const caption=copy.ownerDocument.createElement('p');
+      caption.textContent=item.caption;
+      card.append(img,caption);
+      gallery.appendChild(card);
+    });
+    pageThree.querySelector('.intro').textContent=
+      photos.length ? 'A few memories, shared with love.' : 'Wishing you a day full of happy memories.';
+    pageThree.querySelector('#sharePanel')?.remove();
+
+    // Hide the music upload control in the recipient copy. Embed selected audio when available.
+    copy.querySelector('label[for="songInput"]')?.remove();
+    const songInput=copy.querySelector('#songInput');
+    if(songInput) songInput.style.display='none';
+    const recipientSong=copy.querySelector('#birthdaySong');
+    if(selectedSongFile){
+      if(selectedSongFile.size>12*1024*1024){
+        throw new Error('The selected music file is over 12 MB. Please choose a smaller MP3/audio file so it can be included in the shareable website.');
+      }
+      recipientSong.src=await fileAsDataURL(selectedSongFile);
+      copy.querySelector('#trackName').textContent=selectedSongFile.name;
+      copy.querySelector('#musicStatus').textContent='Press Play to listen to the birthday song.';
+    }else{
+      copy.querySelector('#trackName').textContent='Birthday music';
+      copy.querySelector('#musicStatus').textContent='Choose a song on the sender version to include music here.';
+    }
+
+    // The exported page already contains its photos; don't append this browser's saved photos.
+    const scripts=copy.querySelectorAll('script');
+    if(scripts.length){
+      scripts[scripts.length-1].textContent=scripts[scripts.length-1].textContent.replace(
+        'loadSavedPhotos();',
+        '// Photos are embedded in this personalized birthday page.'
+      );
+    }
+
+    const output='<!DOCTYPE html>\n'+copy.outerHTML;
+    const blob=new Blob([output],{type:'text/html;charset=utf-8'});
+    const url=URL.createObjectURL(blob);
+    const link=document.createElement('a');
+    link.href=url;
+    link.download='birthday-surprise-for-'+(friend||'you').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')+'.html';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),3000);
+    status.textContent='Your personalized website is ready! Send the downloaded HTML file to '+(friend||'your friend')+'. 💗';
+  }catch(error){
+    status.textContent=error.message||'Could not create the personalized website. Please try again.';
+  }
+}
+
+// Music: user supplies their own audio file; no copyrighted track is bundled.
+const song=document.getElementById('birthdaySong');
+const musicButton=document.getElementById('musicButton');
+const musicStatus=document.getElementById('musicStatus');
+document.getElementById('songInput').addEventListener('change',e=>{
+  const file=e.target.files[0];if(!file)return;
+  selectedSongFile=file;
+  if(song.dataset.objectUrl)URL.revokeObjectURL(song.dataset.objectUrl);
+  const url=URL.createObjectURL(file);song.src=url;song.dataset.objectUrl=url;
+  document.getElementById('trackName').textContent=file.name;
+  musicStatus.textContent='Song ready! Press Play.';
+  musicButton.textContent='▶ Play';
+});
+async function toggleMusic(){
+  if(!song.src){musicStatus.textContent='First choose a song from your device.';return;}
+  if(song.paused){
+    try{await song.play();musicButton.textContent='⏸ Pause';musicStatus.textContent='Now playing 🎶';}
+    catch(err){musicStatus.textContent='Could not play this file. Please choose another audio file.';}
+  }else{song.pause();musicButton.textContent='▶ Play';musicStatus.textContent='Music paused.';}
+}
+function stopMusic(){song.pause();song.currentTime=0;musicButton.textContent='▶ Play';musicStatus.textContent='Music stopped.';}
+document.getElementById('volume').addEventListener('input',e=>song.volume=Number(e.target.value));
+song.volume=.7;
+song.addEventListener('ended',()=>{musicButton.textContent='▶ Play';musicStatus.textContent='Song finished.';});
+
+// Celebration effects
+function hearts(){
+  const el=document.createElement('div');el.className='heart';
+  el.textContent=['❤️','💗','💕','💖'][Math.floor(Math.random()*4)];
+  el.style.left=Math.random()*100+'vw';document.body.append(el);
+  setTimeout(()=>el.remove(),5000);
+}
+setInterval(hearts,1100);
+function celebrate(){
+  const colors=['#ff5d9e','#ffd166','#9b8cff','#65d6ce'];
+  for(let i=0;i<85;i++){
+    const piece=document.createElement('div');piece.className='confetti';
+    piece.style.left=Math.random()*100+'vw';
+    piece.style.background=colors[Math.floor(Math.random()*colors.length)];
+    piece.style.animationDelay=Math.random()*1.2+'s';
+    document.body.append(piece);setTimeout(()=>piece.remove(),4500);
+  }
+}
+</script>
+</body>
+</html>
